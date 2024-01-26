@@ -20,29 +20,7 @@ void setup()
 }
 void loop() 
 {
-   // Replace this with your function that returns 1 on beat detection, 0 otherwise
-  int currentState = detectHeartBeat();
-  Serial.println("currentState: " + String(currentState));
-
-  // If there's a transition from no beat to beat (rising edge)
-  if (currentState == 1 && lastState == 0) {
-    unsigned long currentTime = millis();
-    unsigned long timeSinceLastBeat = currentTime - lastBeatTime;
-
-    // Avoid division by zero and very fast beats
-    if (timeSinceLastBeat > 0 && timeSinceLastBeat < 3000) {
-      float heartRate = 60000.0 / timeSinceLastBeat; // Convert to beats per minute
-      Serial.println("Heart Rate: " + String(heartRate) + " BPM");
-    }
-
-    lastBeatTime = currentTime;
-    beats++;
-  }
-
-  lastState = currentState;
-
-  // Other loop logic goes here
-//   delay(1000); // Delay for readability, adjust as needed
+   calculateHeartBeat();
 }
 
 
@@ -69,4 +47,28 @@ int detectHeartBeat()
    }
 
    return sound_detected;
+}
+
+void calculateHeartBeat()
+{
+      // Replace this with your function that returns 1 on beat detection, 0 otherwise
+  int currentState = detectHeartBeat();
+  Serial.println("currentState: " + String(currentState));
+
+  // If there's a transition from no beat to beat (rising edge)
+  if (currentState == 1 && lastState == 0) {
+    unsigned long currentTime = millis();
+    unsigned long timeSinceLastBeat = currentTime - lastBeatTime;
+
+    // Avoid division by zero and very fast beats
+    if (timeSinceLastBeat > 0 && timeSinceLastBeat < 3000) {
+      float heartRate = 60000.0 / timeSinceLastBeat; // Convert to beats per minute
+      Serial.println("Heart Rate: " + String(heartRate) + " BPM");
+    }
+
+    lastBeatTime = currentTime;
+    beats++;
+  }
+
+  lastState = currentState;
 }
