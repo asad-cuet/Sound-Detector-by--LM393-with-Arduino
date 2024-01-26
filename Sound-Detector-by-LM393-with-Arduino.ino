@@ -14,13 +14,31 @@ unsigned long lastBeatTime = 0; // Time of the last beat detection
 int beats = 0;  
 
 
+//gsr_avg
+const int GSR = A0;
+int sensorValue = 0;
+int gsr_avg = 0;
+
+
+//logic var
+int heart_rate_measured=0;
+
+
 void setup()
 { 
    Serial.begin(9600);
 }
 void loop() 
 {
-   calculateHeartBeat();
+   while(!heart_rate_measured)
+   {
+      calculateHeartBeat();
+   }
+   heart_rate_measured=0;
+
+   readGSR();
+
+   delay(5000);
 }
 
 
@@ -63,6 +81,7 @@ void calculateHeartBeat()
     // Avoid division by zero and very fast beats
     if (timeSinceLastBeat > 0 && timeSinceLastBeat < 3000) {
       float heartRate = 60000.0 / timeSinceLastBeat; // Convert to beats per minute
+      heart_rate_measured=1;
       Serial.println("Heart Rate: " + String(heartRate) + " BPM");
     }
 
@@ -71,4 +90,24 @@ void calculateHeartBeat()
   }
 
   lastState = currentState;
+}
+
+void readGSR()
+{
+  long sum = 0;
+  for (int i = 0; i < 10; i++)
+
+  {
+
+    sensorValue = analogRead(GSR);
+
+    sum += sensorValue;
+
+    delay(100);
+
+  }
+
+  gsr_avg = sum / 10;
+  Serial.print("gsr_avg=");
+  Serial.println(gsr_avg);
 }
